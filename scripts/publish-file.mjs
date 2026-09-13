@@ -21,10 +21,12 @@ const short = crypto.createHash('sha1').update(raw).digest('hex').slice(0, 8);
 const fileName = `${baseName}-${short}.html`;
 const rel = `travel/${fileName}`;
 await fs.writeFile(path.join(repoRoot, rel), raw);
+await fs.writeFile(path.join(repoRoot, 'travel', 'latest.html'), raw);
 const manifestPath = path.join(repoRoot, 'shared-files.json');
 let manifest = [];
 try { manifest = JSON.parse(await fs.readFile(manifestPath, 'utf8')); } catch {}
-manifest = manifest.filter(x => x.path !== rel);
+manifest = manifest.filter(x => x.path !== rel && x.path !== 'travel/latest.html');
+manifest.unshift({ title: '最新旅游攻略', path: 'travel/latest.html', createdAt: new Date().toISOString() });
 manifest.unshift({ title: titleArg || baseName, path: rel, createdAt: new Date().toISOString() });
 await fs.writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
 console.log(JSON.stringify({ path: rel, title: titleArg || baseName }, null, 2));
