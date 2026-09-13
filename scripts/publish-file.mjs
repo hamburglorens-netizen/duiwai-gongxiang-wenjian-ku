@@ -14,7 +14,9 @@ const travelDir = path.join(repoRoot, 'travel');
 await fs.mkdir(travelDir, { recursive: true });
 const raw = await fs.readFile(src);
 const stamp = new Date().toISOString().replace(/[-:TZ.]/g, '').slice(0, 14);
-const baseName = path.basename(src).replace(/\.html?$/i, '').replace(/[^\p{L}\p{N}._-]+/gu, '-').replace(/^-+|-+$/g, '').slice(0, 80) || `file-${stamp}`;
+// Keep public URLs ASCII-only and short. QQ/微信内置浏览器更容易拦截超长中文
+// percent-encoded URL；标题仍写入 manifest 显示，文件名只承担稳定访问职责。
+const baseName = `share-${stamp}`;
 const short = crypto.createHash('sha1').update(raw).digest('hex').slice(0, 8);
 const fileName = `${baseName}-${short}.html`;
 const rel = `travel/${fileName}`;
